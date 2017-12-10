@@ -1,8 +1,9 @@
-package account
+package balance
 
-// BalanceResponse balance response
-type BalanceResponse struct {
+// Balance balance response
+type Balance struct {
 	Success bool   `json:"success"`
+	Error   string `json:"error"`
 	JPY     string `json:"jpy"`
 	BTC     string `json:"btc"`
 	ETH     string `json:"eth"`

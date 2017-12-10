@@ -4,6 +4,17 @@
         "secret": ""
     },
     "transaction": {
-
+        "bid": {
+            "dailybudget": 10000,
+            "threshold": 1500000,
+            "bidprice": 1000,
+            "type": "limit"
+        },
+        "ask": {
+            "dailybudget": 10000,
+            "threshold": 2000000,
+            "askprice": 1000,
+            "type": "limit"
+        }
     }
 }

@@ -1,41 +1,44 @@
 package main
 
 import (
-	"coincheck/account"
+	"coincheck"
+	"coincheck/balance"
+	"coincheck/ticker"
 	"config"
 	"fmt"
-
-	"util"
-)
-
-var (
-	publicKey string
-	secretKey string
+	"os"
+	"strconv"
 )
 
 func main() {
-	configure, err := config.GetConfig()
+	// init client
+	configure := config.GetConfig()
+	client := coincheck.New(configure.Key, configure.SecretKey)
+
+	// step 1. Check balance
+	balance, err := balance.GetBalance(client)
 	if err != nil {
 		panic(err)
 	}
 
-	publicKey = configure.Key
-	secretKey = configure.SecretKey
-	message := util.Nonce + account.BalanceEndpointUrl
-	signature := resolveSignature(secretKey, message)
-
-	if balance, err := account.GetAccountBalance(publicKey, util.Nonce, signature); err != nil {
+	balanceinjpy, err := strconv.ParseFloat(balance.JPY, 32)
+	if err != nil {
 		panic(err)
-	} else {
-		fmt.Println(balance)
 	}
-}
 
-// resolveSignature resolve signature
-// https://coincheck.com/documents/exchange/api
-func resolveSignature(secret, message string) string {
-	secretbytes := []byte(secret)
-	messagebytes := []byte(message)
+	if balanceinjpy < 1000 {
+		fmt.Printf("Insufficient balance. Your current balance is %g yen, please depoist\n", balanceinjpy)
+		os.Exit(1)
+	}
 
-	return util.HmacSHA256(secretbytes, messagebytes)
+	// Step 2. Check exchange rate
+	ticker, err := ticker.GetTicker(client)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(ticker)
+
+	// Step 3. Apply rules
+
 }

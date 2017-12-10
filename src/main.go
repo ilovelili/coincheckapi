@@ -3,6 +3,7 @@ package main
 import (
 	"coincheck/account"
 	"config"
+	"fmt"
 
 	"util"
 )
@@ -20,13 +21,13 @@ func main() {
 
 	publicKey = configure.Key
 	secretKey = configure.SecretKey
-	message := util.Nonce
+	message := util.Nonce + account.BalanceEndpointUrl
 	signature := resolveSignature(secretKey, message)
 
-	err = account.GetAccountBalance(publicKey, util.Nonce, signature)
-
-	if err != nil {
+	if balance, err := account.GetAccountBalance(publicKey, util.Nonce, signature); err != nil {
 		panic(err)
+	} else {
+		fmt.Println(balance)
 	}
 }
 

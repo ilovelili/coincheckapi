@@ -1,5 +1,6 @@
 package account
 
 const (
-	EndpointUrl = "https://coincheck.com/api/accounts/balance"
+	// BalanceEndpointUrl balance related
+	BalanceEndpointUrl = "https://coincheck.com/api/accounts/balance"
 )

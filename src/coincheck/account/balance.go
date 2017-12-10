@@ -1,16 +1,16 @@
 package account
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
 )
 
 // GetAccountBalance get account balance
-func GetAccountBalance(key, nonce, signature string) (err error) {
-	req, _ := http.NewRequest("GET", EndpointUrl, nil)
+func GetAccountBalance(key, nonce, signature string) (balance *BalanceResponse, err error) {
+	req, _ := http.NewRequest("GET", BalanceEndpointUrl, nil)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
@@ -21,7 +21,7 @@ func GetAccountBalance(key, nonce, signature string) (err error) {
 	client := &http.Client{Timeout: time.Duration(15 * time.Second)}
 	res, err := client.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if res.StatusCode >= 400 {
@@ -30,9 +30,6 @@ func GetAccountBalance(key, nonce, signature string) (err error) {
 		return
 	}
 
-	bytes, _ := ioutil.ReadAll(res.Body)
-	fmt.Println(string(bytes))
-
+	err = json.NewDecoder(res.Body).Decode(&balance)
 	return
-	// err = json.NewDecoder(res.Body).Decode(&status)
 }
